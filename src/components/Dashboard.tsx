@@ -236,14 +236,14 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           </div>
         </button>
 
-        {/* 5. SỔ GHI ĐIỂM */}
+        {/* 5. SỔ GHI ĐIỂM TIỂU HỌC */}
         <button 
           onClick={() => onNavigate('gradebook')}
           className="w-full bg-white rounded-2xl p-4 shadow-sm border border-blue-100 text-left transition-all active:scale-[0.98] hover:shadow-md flex flex-col group"
         >
           <div className="flex items-center gap-1.5 mb-2.5">
             <ClipboardEdit size={16} className="text-[#1e3a8a]" />
-            <h3 className="text-[13px] font-bold text-[#1e3a8a] tracking-wide uppercase">SỔ GHI ĐIỂM</h3>
+            <h3 className="text-[13px] font-bold text-[#1e3a8a] tracking-wide uppercase">SỔ GHI ĐIỂM TIỂU HỌC</h3>
           </div>
           
           <div className="flex items-center gap-4 mb-4">

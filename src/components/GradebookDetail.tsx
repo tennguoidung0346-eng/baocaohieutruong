@@ -16,47 +16,47 @@ const mockDataByPeriod: Record<string, any> = {
     type: 'intermediate',
     subjectEvaluation: [
       { subject: 'Toán', htt: 45, ht: 40, cht: 15 },
-      { subject: 'Ngữ văn', htt: 50, ht: 45, cht: 5 },
+      { subject: 'Tiếng Việt', htt: 50, ht: 45, cht: 5 },
       { subject: 'Tiếng Anh', htt: 30, ht: 50, cht: 20 },
-      { subject: 'Vật lý', htt: 40, ht: 45, cht: 15 },
-      { subject: 'Hóa học', htt: 35, ht: 55, cht: 10 },
+      { subject: 'Tự nhiên và Xã hội', htt: 40, ht: 45, cht: 15 },
+      { subject: 'Đạo đức', htt: 35, ht: 55, cht: 10 },
     ],
     entryProgress: [
       { 
-        id: 1, grade: 'Khối 10', subjectMissing: 2, competenceMissing: 5, 
+        id: 1, grade: 'Khối 1', subjectMissing: 2, competenceMissing: 5, 
         missingClasses: [
-          { className: '10A1', missingSubjects: ['Toán'], missingPCNL: true },
-          { className: '10A2', missingSubjects: [], missingPCNL: true },
-          { className: '10A3', missingSubjects: ['Ngữ văn'], missingPCNL: true },
-          { className: '10A4', missingSubjects: [], missingPCNL: true },
-          { className: '10A5', missingSubjects: [], missingPCNL: true }
+          { className: '1A1', missingSubjects: ['Toán'], missingPCNL: true },
+          { className: '1A2', missingSubjects: [], missingPCNL: true },
+          { className: '1A3', missingSubjects: ['Tiếng Việt'], missingPCNL: true },
+          { className: '1A4', missingSubjects: [], missingPCNL: true },
+          { className: '1A5', missingSubjects: [], missingPCNL: true }
         ] 
       },
       { 
-        id: 2, grade: 'Khối 11', subjectMissing: 0, competenceMissing: 3, 
+        id: 2, grade: 'Khối 2', subjectMissing: 0, competenceMissing: 3, 
         missingClasses: [
-          { className: '11A2', missingSubjects: [], missingPCNL: true },
-          { className: '11A4', missingSubjects: [], missingPCNL: true },
-          { className: '11A5', missingSubjects: [], missingPCNL: true }
+          { className: '2A2', missingSubjects: [], missingPCNL: true },
+          { className: '2A4', missingSubjects: [], missingPCNL: true },
+          { className: '2A5', missingSubjects: [], missingPCNL: true }
         ] 
       },
       { 
-        id: 3, grade: 'Khối 12', subjectMissing: 1, competenceMissing: 1, 
+        id: 3, grade: 'Khối 3', subjectMissing: 1, competenceMissing: 1, 
         missingClasses: [
-          { className: '12A1', missingSubjects: ['Vật lý'], missingPCNL: true }
+          { className: '3A1', missingSubjects: ['Tự nhiên và Xã hội'], missingPCNL: true }
         ] 
       },
     ],
     attentionNeeded: {
       studentsToSupport: [
-        { name: 'Nguyễn Văn A', class: '10A1', reason: 'Điểm Toán, Lý dưới trung bình' },
-        { name: 'Trần Thị B', class: '11A2', reason: 'Nghỉ học nhiều, hổng kiến thức' }
+        { name: 'Nguyễn Văn A', class: '1A1', reason: 'Điểm Toán, Tiếng Việt dưới trung bình' },
+        { name: 'Trần Thị B', class: '2A2', reason: 'Nghỉ học nhiều, hổng kiến thức' }
       ],
       outstandingStudents: [
-        { name: 'Lê Hoàng C', class: '12A1', achievement: 'Đạt giải Nhất HSG cấp Tỉnh' }
+        { name: 'Lê Hoàng C', class: '3A1', achievement: 'Đạt giải Nhất HSG cấp Tỉnh' }
       ],
       subjectsToWatch: [
-        { subject: 'Tiếng Anh 10', issue: 'Tỷ lệ chưa hoàn thành cao (20%)' }
+        { subject: 'Tiếng Anh 1', issue: 'Tỷ lệ chưa hoàn thành cao (20%)' }
       ]
     }
   },
@@ -64,34 +64,34 @@ const mockDataByPeriod: Record<string, any> = {
     type: 'intermediate',
     subjectEvaluation: [
       { subject: 'Toán', htt: 55, ht: 35, cht: 10 },
-      { subject: 'Ngữ văn', htt: 60, ht: 35, cht: 5 },
+      { subject: 'Tiếng Việt', htt: 60, ht: 35, cht: 5 },
       { subject: 'Tiếng Anh', htt: 40, ht: 45, cht: 15 },
-      { subject: 'Vật lý', htt: 50, ht: 40, cht: 10 },
-      { subject: 'Hóa học', htt: 45, ht: 50, cht: 5 },
+      { subject: 'Khoa học', htt: 50, ht: 40, cht: 10 },
+      { subject: 'Lịch sử và Địa lý', htt: 45, ht: 50, cht: 5 },
     ],
     entryProgress: [
       { 
-        id: 1, grade: 'Khối 10', subjectMissing: 0, competenceMissing: 1, 
+        id: 1, grade: 'Khối 4', subjectMissing: 0, competenceMissing: 1, 
         missingClasses: [
-          { className: '10A5', missingSubjects: [], missingPCNL: true }
+          { className: '4A5', missingSubjects: [], missingPCNL: true }
         ] 
       },
-      { id: 2, grade: 'Khối 11', subjectMissing: 0, competenceMissing: 0, missingClasses: [] },
-      { id: 3, grade: 'Khối 12', subjectMissing: 0, competenceMissing: 0, missingClasses: [] },
+      { id: 2, grade: 'Khối 5', subjectMissing: 0, competenceMissing: 0, missingClasses: [] },
+      { id: 3, grade: 'Khối 1', subjectMissing: 0, competenceMissing: 0, missingClasses: [] },
     ],
     attentionNeeded: {
       studentsToSupport: [
-        { name: 'Phạm Văn D', class: '10A3', reason: 'Chưa hoàn thành môn Tiếng Anh' },
-        { name: 'Nguyễn Thị L', class: '11A2', reason: 'Điểm trung bình các môn giảm sút' },
-        { name: 'Lê Hoàng M', class: '12A4', reason: 'Thường xuyên không nộp bài tập' }
+        { name: 'Phạm Văn D', class: '4A3', reason: 'Chưa hoàn thành môn Tiếng Anh' },
+        { name: 'Nguyễn Thị L', class: '5A2', reason: 'Điểm trung bình các môn giảm sút' },
+        { name: 'Lê Hoàng M', class: '1A4', reason: 'Thường xuyên không nộp bài tập' }
       ],
       outstandingStudents: [
-        { name: 'Vũ Thị E', class: '11A1', achievement: 'Tiến bộ vượt bậc môn Toán' },
-        { name: 'Trần Đức N', class: '12A1', achievement: 'Đạt điểm 10 môn Vật lý' }
+        { name: 'Vũ Thị E', class: '4A1', achievement: 'Tiến bộ vượt bậc môn Toán' },
+        { name: 'Trần Đức N', class: '5A1', achievement: 'Đạt điểm 10 môn Khoa học' }
       ],
       subjectsToWatch: [
-        { subject: 'Vật lý 11', issue: 'Điểm trung bình giảm so với giữa kỳ' },
-        { subject: 'Lịch sử 10', issue: 'Nhiều học sinh chưa hoàn thành bài kiểm tra' }
+        { subject: 'Khoa học 4', issue: 'Điểm trung bình giảm so với giữa kỳ' },
+        { subject: 'Lịch sử và Địa lý 5', issue: 'Nhiều học sinh chưa hoàn thành bài kiểm tra' }
       ]
     }
   },
@@ -99,53 +99,53 @@ const mockDataByPeriod: Record<string, any> = {
     type: 'intermediate',
     subjectEvaluation: [
       { subject: 'Toán', htt: 60, ht: 30, cht: 10 },
-      { subject: 'Ngữ văn', htt: 65, ht: 30, cht: 5 },
+      { subject: 'Tiếng Việt', htt: 65, ht: 30, cht: 5 },
       { subject: 'Tiếng Anh', htt: 50, ht: 40, cht: 10 },
-      { subject: 'Vật lý', htt: 55, ht: 35, cht: 10 },
-      { subject: 'Hóa học', htt: 50, ht: 45, cht: 5 },
+      { subject: 'Tự nhiên và Xã hội', htt: 55, ht: 35, cht: 10 },
+      { subject: 'Đạo đức', htt: 50, ht: 45, cht: 5 },
     ],
     entryProgress: [
       { 
-        id: 1, grade: 'Khối 10', subjectMissing: 3, competenceMissing: 4, 
+        id: 1, grade: 'Khối 1', subjectMissing: 3, competenceMissing: 4, 
         missingClasses: [
-          { className: '10A1', missingSubjects: [], missingPCNL: true },
-          { className: '10A2', missingSubjects: ['Toán', 'Vật lý'], missingPCNL: true },
-          { className: '10A4', missingSubjects: ['Ngữ văn'], missingPCNL: true },
-          { className: '10A5', missingSubjects: ['Tiếng Anh', 'Hóa học'], missingPCNL: true }
+          { className: '1A1', missingSubjects: [], missingPCNL: true },
+          { className: '1A2', missingSubjects: ['Toán', 'Tự nhiên và Xã hội'], missingPCNL: true },
+          { className: '1A4', missingSubjects: ['Tiếng Việt'], missingPCNL: true },
+          { className: '1A5', missingSubjects: ['Tiếng Anh', 'Đạo đức'], missingPCNL: true }
         ] 
       },
       { 
-        id: 2, grade: 'Khối 11', subjectMissing: 1, competenceMissing: 2, 
+        id: 2, grade: 'Khối 2', subjectMissing: 1, competenceMissing: 2, 
         missingClasses: [
-          { className: '11A1', missingSubjects: [], missingPCNL: true },
-          { className: '11A3', missingSubjects: ['Toán'], missingPCNL: true }
+          { className: '2A1', missingSubjects: [], missingPCNL: true },
+          { className: '2A3', missingSubjects: ['Toán'], missingPCNL: true }
         ] 
       },
       { 
-        id: 3, grade: 'Khối 12', subjectMissing: 0, competenceMissing: 1, 
+        id: 3, grade: 'Khối 3', subjectMissing: 0, competenceMissing: 1, 
         missingClasses: [
-          { className: '12A2', missingSubjects: [], missingPCNL: true }
+          { className: '3A2', missingSubjects: [], missingPCNL: true }
         ] 
       },
     ],
     attentionNeeded: {
       studentsToSupport: [
-        { name: 'Hoàng Văn F', class: '12A5', reason: 'Nguy cơ trượt tốt nghiệp môn Toán' },
-        { name: 'Lê Thị H', class: '10A2', reason: 'Điểm kiểm tra các môn tự nhiên liên tục dưới 5' },
-        { name: 'Trần Văn K', class: '11A3', reason: 'Thường xuyên vắng học không phép' },
-        { name: 'Phạm Thu M', class: '10A5', reason: 'Kết quả học tập sa sút đột ngột' },
-        { name: 'Nguyễn Hải N', class: '12A1', reason: 'Điểm thi thử môn Tiếng Anh thấp' }
+        { name: 'Hoàng Văn F', class: '3A5', reason: 'Nguy cơ ở lại lớp môn Toán' },
+        { name: 'Lê Thị H', class: '1A2', reason: 'Điểm kiểm tra các môn liên tục dưới 5' },
+        { name: 'Trần Văn K', class: '2A3', reason: 'Thường xuyên vắng học không phép' },
+        { name: 'Phạm Thu M', class: '1A5', reason: 'Kết quả học tập sa sút đột ngột' },
+        { name: 'Nguyễn Hải N', class: '3A1', reason: 'Điểm thi thử môn Tiếng Anh thấp' }
       ],
       outstandingStudents: [
-        { name: 'Ngô Thị G', class: '10A1', achievement: 'Đạt điểm tối đa 3 môn Khoa học tự nhiên' },
-        { name: 'Bùi Văn P', class: '11A1', achievement: 'Đạt giải Nhất kỳ thi Olympic Tin học' },
-        { name: 'Đặng Thu Q', class: '12A2', achievement: 'Điểm trung bình các môn đạt 9.5' },
-        { name: 'Lý Hải R', class: '10A3', achievement: 'Có tiến bộ vượt bậc trong học kỳ này' }
+        { name: 'Ngô Thị G', class: '1A1', achievement: 'Đạt điểm tối đa 3 môn học' },
+        { name: 'Bùi Văn P', class: '2A1', achievement: 'Đạt giải Nhất kỳ thi Vở sạch chữ đẹp' },
+        { name: 'Đặng Thu Q', class: '3A2', achievement: 'Điểm trung bình các môn đạt 9.5' },
+        { name: 'Lý Hải R', class: '1A3', achievement: 'Có tiến bộ vượt bậc trong học kỳ này' }
       ],
       subjectsToWatch: [
-        { subject: 'Hóa học 12', issue: 'Nhiều học sinh điểm dưới trung bình' },
-        { subject: 'Tiếng Anh 10', issue: 'Tỷ lệ chưa hoàn thành tăng 15% so với kỳ trước' },
-        { subject: 'Vật lý 11', issue: 'Phổ điểm tập trung ở mức 5-6, ít điểm giỏi' }
+        { subject: 'Đạo đức 3', issue: 'Nhiều học sinh điểm dưới trung bình' },
+        { subject: 'Tiếng Anh 1', issue: 'Tỷ lệ chưa hoàn thành tăng 15% so với kỳ trước' },
+        { subject: 'Tự nhiên và Xã hội 2', issue: 'Phổ điểm tập trung ở mức 5-6, ít điểm giỏi' }
       ]
     }
   },
@@ -159,7 +159,7 @@ const mockDataByPeriod: Record<string, any> = {
     ],
     gradeData: [
       { 
-        id: 1, name: 'Khối 10', total: 500,
+        id: 1, name: 'Khối 1', total: 500,
         stats: [
           { label: 'Xuất sắc', value: 170, color: 'bg-emerald-500' },
           { label: 'Tốt', value: 220, color: 'bg-blue-500' },
@@ -169,7 +169,7 @@ const mockDataByPeriod: Record<string, any> = {
         warnings: []
       },
       { 
-        id: 2, name: 'Khối 11', total: 500,
+        id: 2, name: 'Khối 2', total: 500,
         stats: [
           { label: 'Xuất sắc', value: 180, color: 'bg-emerald-500' },
           { label: 'Tốt', value: 230, color: 'bg-blue-500' },
@@ -179,7 +179,7 @@ const mockDataByPeriod: Record<string, any> = {
         warnings: []
       },
       { 
-        id: 3, name: 'Khối 12', total: 500,
+        id: 3, name: 'Khối 3', total: 500,
         stats: [
           { label: 'Xuất sắc', value: 150, color: 'bg-emerald-500' },
           { label: 'Tốt', value: 200, color: 'bg-blue-500' },
@@ -190,7 +190,7 @@ const mockDataByPeriod: Record<string, any> = {
       },
     ],
     teacherPerformance: [
-      { id: 1, name: 'Cô Phạm Thị D', subject: 'Ngữ văn', status: 'excellent', description: '100% học sinh hoàn thành tốt' },
+      { id: 1, name: 'Cô Phạm Thị D', subject: 'Tiếng Việt', status: 'excellent', description: '100% học sinh hoàn thành tốt' },
       { id: 2, name: 'Thầy Hoàng Văn E', subject: 'Tiếng Anh', status: 'excellent', description: 'Thành tích xuất sắc' },
     ]
   }
@@ -224,7 +224,7 @@ export default function GradebookDetail({ onBack }: GradebookDetailProps) {
         <button onClick={onBack} className="p-1 -ml-1 text-[#1e3a8a]">
           <ChevronLeft size={28} />
         </button>
-        <h1 className="text-[18px] font-bold text-[#1e3a8a]">Sổ ghi điểm (Thông tư 27)</h1>
+        <h1 className="text-[18px] font-bold text-[#1e3a8a]">Sổ ghi điểm Tiểu học (Thông tư 27)</h1>
       </div>
 
       <div className="p-4 space-y-4">
