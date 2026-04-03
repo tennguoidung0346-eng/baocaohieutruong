@@ -228,7 +228,9 @@ export default function LoginDetail({ onBack }: LoginDetailProps) {
                      <Users size={20} />}
                   </div>
                   <div>
-                    <h3 className="text-[13px] font-bold text-gray-900 leading-tight">{event.user}</h3>
+                    <h3 className="text-[13px] font-bold text-gray-900 leading-tight">
+                      {event.role === 'Phụ huynh' ? `PH: ${event.user}` : event.user}
+                    </h3>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[11px] font-medium text-gray-500">{event.role}</span>
                       <span className="w-1 h-1 rounded-full bg-gray-300"></span>

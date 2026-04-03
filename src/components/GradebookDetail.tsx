@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, Calendar, Users, AlertTriangle, TrendingUp, TrendingDown, BookOpen, UserCheck, UserX, Award, BarChart2, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronLeft, Calendar, Users, AlertTriangle, TrendingUp, TrendingDown, BookOpen, UserCheck, UserX, Award, BarChart2, ChevronDown, ChevronUp, Clock, X } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -9,71 +9,211 @@ interface GradebookDetailProps {
 
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444']; // Xuất sắc, Tốt, Hoàn thành, Chưa hoàn thành
 
-const overallStats = [
-  { name: 'Xuất sắc', value: 450, percentage: 30 },
-  { name: 'Tốt', value: 600, percentage: 40 },
-  { name: 'Hoàn thành', value: 375, percentage: 25 },
-  { name: 'Chưa hoàn thành', value: 75, percentage: 5 },
-];
+const PERIODS = ['Giữa HKI', 'Cuối HKI', 'Giữa HKII', 'Cuối năm'];
 
-const gradeData = [
-  { 
-    id: 1,
-    name: 'Khối 10', 
-    total: 500,
-    stats: [
-      { label: 'Xuất sắc', value: 150, color: 'bg-emerald-500' },
-      { label: 'Tốt', value: 200, color: 'bg-blue-500' },
-      { label: 'Hoàn thành', value: 130, color: 'bg-amber-500' },
-      { label: 'Chưa HT', value: 20, color: 'bg-red-500' }
+const mockDataByPeriod: Record<string, any> = {
+  'Giữa HKI': {
+    type: 'intermediate',
+    subjectEvaluation: [
+      { subject: 'Toán', htt: 45, ht: 40, cht: 15 },
+      { subject: 'Ngữ văn', htt: 50, ht: 45, cht: 5 },
+      { subject: 'Tiếng Anh', htt: 30, ht: 50, cht: 20 },
+      { subject: 'Vật lý', htt: 40, ht: 45, cht: 15 },
+      { subject: 'Hóa học', htt: 35, ht: 55, cht: 10 },
     ],
-    warnings: [
-      { id: 2, class: '10A5', subject: 'Vật lý', issue: 'Điểm trung bình giảm so với kỳ trước', teacher: 'Cô Trần Thị B' }
-    ]
-  },
-  { 
-    id: 2,
-    name: 'Khối 11', 
-    total: 500,
-    stats: [
-      { label: 'Xuất sắc', value: 160, color: 'bg-emerald-500' },
-      { label: 'Tốt', value: 210, color: 'bg-blue-500' },
-      { label: 'Hoàn thành', value: 110, color: 'bg-amber-500' },
-      { label: 'Chưa HT', value: 20, color: 'bg-red-500' }
+    entryProgress: [
+      { 
+        id: 1, grade: 'Khối 10', subjectMissing: 2, competenceMissing: 5, 
+        missingClasses: [
+          { className: '10A1', missingSubjects: ['Toán'], missingPCNL: true },
+          { className: '10A2', missingSubjects: [], missingPCNL: true },
+          { className: '10A3', missingSubjects: ['Ngữ văn'], missingPCNL: true },
+          { className: '10A4', missingSubjects: [], missingPCNL: true },
+          { className: '10A5', missingSubjects: [], missingPCNL: true }
+        ] 
+      },
+      { 
+        id: 2, grade: 'Khối 11', subjectMissing: 0, competenceMissing: 3, 
+        missingClasses: [
+          { className: '11A2', missingSubjects: [], missingPCNL: true },
+          { className: '11A4', missingSubjects: [], missingPCNL: true },
+          { className: '11A5', missingSubjects: [], missingPCNL: true }
+        ] 
+      },
+      { 
+        id: 3, grade: 'Khối 12', subjectMissing: 1, competenceMissing: 1, 
+        missingClasses: [
+          { className: '12A1', missingSubjects: ['Vật lý'], missingPCNL: true }
+        ] 
+      },
     ],
-    warnings: [
-      { id: 3, class: '11A3', subject: 'Hóa học', issue: 'Chưa nhập đủ điểm giữa kỳ', teacher: 'Thầy Lê Văn C' }
-    ]
+    attentionNeeded: {
+      studentsToSupport: [
+        { name: 'Nguyễn Văn A', class: '10A1', reason: 'Điểm Toán, Lý dưới trung bình' },
+        { name: 'Trần Thị B', class: '11A2', reason: 'Nghỉ học nhiều, hổng kiến thức' }
+      ],
+      outstandingStudents: [
+        { name: 'Lê Hoàng C', class: '12A1', achievement: 'Đạt giải Nhất HSG cấp Tỉnh' }
+      ],
+      subjectsToWatch: [
+        { subject: 'Tiếng Anh 10', issue: 'Tỷ lệ chưa hoàn thành cao (20%)' }
+      ]
+    }
   },
-  { 
-    id: 3,
-    name: 'Khối 12', 
-    total: 500,
-    stats: [
-      { label: 'Xuất sắc', value: 140, color: 'bg-emerald-500' },
-      { label: 'Tốt', value: 190, color: 'bg-blue-500' },
-      { label: 'Hoàn thành', value: 135, color: 'bg-amber-500' },
-      { label: 'Chưa HT', value: 35, color: 'bg-red-500' }
+  'Cuối HKI': {
+    type: 'intermediate',
+    subjectEvaluation: [
+      { subject: 'Toán', htt: 55, ht: 35, cht: 10 },
+      { subject: 'Ngữ văn', htt: 60, ht: 35, cht: 5 },
+      { subject: 'Tiếng Anh', htt: 40, ht: 45, cht: 15 },
+      { subject: 'Vật lý', htt: 50, ht: 40, cht: 10 },
+      { subject: 'Hóa học', htt: 45, ht: 50, cht: 5 },
     ],
-    warnings: [
-      { id: 1, class: '12A1', subject: 'Toán', issue: 'Tỷ lệ chưa hoàn thành cao (15%)', teacher: 'Thầy Nguyễn Văn A' }
-    ]
+    entryProgress: [
+      { 
+        id: 1, grade: 'Khối 10', subjectMissing: 0, competenceMissing: 1, 
+        missingClasses: [
+          { className: '10A5', missingSubjects: [], missingPCNL: true }
+        ] 
+      },
+      { id: 2, grade: 'Khối 11', subjectMissing: 0, competenceMissing: 0, missingClasses: [] },
+      { id: 3, grade: 'Khối 12', subjectMissing: 0, competenceMissing: 0, missingClasses: [] },
+    ],
+    attentionNeeded: {
+      studentsToSupport: [
+        { name: 'Phạm Văn D', class: '10A3', reason: 'Chưa hoàn thành môn Tiếng Anh' },
+        { name: 'Nguyễn Thị L', class: '11A2', reason: 'Điểm trung bình các môn giảm sút' },
+        { name: 'Lê Hoàng M', class: '12A4', reason: 'Thường xuyên không nộp bài tập' }
+      ],
+      outstandingStudents: [
+        { name: 'Vũ Thị E', class: '11A1', achievement: 'Tiến bộ vượt bậc môn Toán' },
+        { name: 'Trần Đức N', class: '12A1', achievement: 'Đạt điểm 10 môn Vật lý' }
+      ],
+      subjectsToWatch: [
+        { subject: 'Vật lý 11', issue: 'Điểm trung bình giảm so với giữa kỳ' },
+        { subject: 'Lịch sử 10', issue: 'Nhiều học sinh chưa hoàn thành bài kiểm tra' }
+      ]
+    }
   },
-];
-
-const teacherPerformance = [
-  { id: 1, name: 'Cô Phạm Thị D', subject: 'Ngữ văn', status: 'excellent', description: '100% học sinh hoàn thành tốt' },
-  { id: 2, name: 'Thầy Hoàng Văn E', subject: 'Tiếng Anh', status: 'good', description: 'Tỷ lệ khá giỏi tăng 10%' },
-  { id: 3, name: 'Cô Vũ Thị F', subject: 'Lịch sử', status: 'needs_improvement', description: 'Nhiều học sinh điểm dưới trung bình' },
-];
+  'Giữa HKII': {
+    type: 'intermediate',
+    subjectEvaluation: [
+      { subject: 'Toán', htt: 60, ht: 30, cht: 10 },
+      { subject: 'Ngữ văn', htt: 65, ht: 30, cht: 5 },
+      { subject: 'Tiếng Anh', htt: 50, ht: 40, cht: 10 },
+      { subject: 'Vật lý', htt: 55, ht: 35, cht: 10 },
+      { subject: 'Hóa học', htt: 50, ht: 45, cht: 5 },
+    ],
+    entryProgress: [
+      { 
+        id: 1, grade: 'Khối 10', subjectMissing: 3, competenceMissing: 4, 
+        missingClasses: [
+          { className: '10A1', missingSubjects: [], missingPCNL: true },
+          { className: '10A2', missingSubjects: ['Toán', 'Vật lý'], missingPCNL: true },
+          { className: '10A4', missingSubjects: ['Ngữ văn'], missingPCNL: true },
+          { className: '10A5', missingSubjects: ['Tiếng Anh', 'Hóa học'], missingPCNL: true }
+        ] 
+      },
+      { 
+        id: 2, grade: 'Khối 11', subjectMissing: 1, competenceMissing: 2, 
+        missingClasses: [
+          { className: '11A1', missingSubjects: [], missingPCNL: true },
+          { className: '11A3', missingSubjects: ['Toán'], missingPCNL: true }
+        ] 
+      },
+      { 
+        id: 3, grade: 'Khối 12', subjectMissing: 0, competenceMissing: 1, 
+        missingClasses: [
+          { className: '12A2', missingSubjects: [], missingPCNL: true }
+        ] 
+      },
+    ],
+    attentionNeeded: {
+      studentsToSupport: [
+        { name: 'Hoàng Văn F', class: '12A5', reason: 'Nguy cơ trượt tốt nghiệp môn Toán' },
+        { name: 'Lê Thị H', class: '10A2', reason: 'Điểm kiểm tra các môn tự nhiên liên tục dưới 5' },
+        { name: 'Trần Văn K', class: '11A3', reason: 'Thường xuyên vắng học không phép' },
+        { name: 'Phạm Thu M', class: '10A5', reason: 'Kết quả học tập sa sút đột ngột' },
+        { name: 'Nguyễn Hải N', class: '12A1', reason: 'Điểm thi thử môn Tiếng Anh thấp' }
+      ],
+      outstandingStudents: [
+        { name: 'Ngô Thị G', class: '10A1', achievement: 'Đạt điểm tối đa 3 môn Khoa học tự nhiên' },
+        { name: 'Bùi Văn P', class: '11A1', achievement: 'Đạt giải Nhất kỳ thi Olympic Tin học' },
+        { name: 'Đặng Thu Q', class: '12A2', achievement: 'Điểm trung bình các môn đạt 9.5' },
+        { name: 'Lý Hải R', class: '10A3', achievement: 'Có tiến bộ vượt bậc trong học kỳ này' }
+      ],
+      subjectsToWatch: [
+        { subject: 'Hóa học 12', issue: 'Nhiều học sinh điểm dưới trung bình' },
+        { subject: 'Tiếng Anh 10', issue: 'Tỷ lệ chưa hoàn thành tăng 15% so với kỳ trước' },
+        { subject: 'Vật lý 11', issue: 'Phổ điểm tập trung ở mức 5-6, ít điểm giỏi' }
+      ]
+    }
+  },
+  'Cuối năm': {
+    type: 'final',
+    overallStats: [
+      { name: 'Xuất sắc', value: 500, percentage: 33 },
+      { name: 'Tốt', value: 650, percentage: 43 },
+      { name: 'Hoàn thành', value: 300, percentage: 20 },
+      { name: 'Chưa hoàn thành', value: 50, percentage: 4 },
+    ],
+    gradeData: [
+      { 
+        id: 1, name: 'Khối 10', total: 500,
+        stats: [
+          { label: 'Xuất sắc', value: 170, color: 'bg-emerald-500' },
+          { label: 'Tốt', value: 220, color: 'bg-blue-500' },
+          { label: 'Hoàn thành', value: 100, color: 'bg-amber-500' },
+          { label: 'Chưa HT', value: 10, color: 'bg-red-500' }
+        ],
+        warnings: []
+      },
+      { 
+        id: 2, name: 'Khối 11', total: 500,
+        stats: [
+          { label: 'Xuất sắc', value: 180, color: 'bg-emerald-500' },
+          { label: 'Tốt', value: 230, color: 'bg-blue-500' },
+          { label: 'Hoàn thành', value: 80, color: 'bg-amber-500' },
+          { label: 'Chưa HT', value: 10, color: 'bg-red-500' }
+        ],
+        warnings: []
+      },
+      { 
+        id: 3, name: 'Khối 12', total: 500,
+        stats: [
+          { label: 'Xuất sắc', value: 150, color: 'bg-emerald-500' },
+          { label: 'Tốt', value: 200, color: 'bg-blue-500' },
+          { label: 'Hoàn thành', value: 120, color: 'bg-amber-500' },
+          { label: 'Chưa HT', value: 30, color: 'bg-red-500' }
+        ],
+        warnings: []
+      },
+    ],
+    teacherPerformance: [
+      { id: 1, name: 'Cô Phạm Thị D', subject: 'Ngữ văn', status: 'excellent', description: '100% học sinh hoàn thành tốt' },
+      { id: 2, name: 'Thầy Hoàng Văn E', subject: 'Tiếng Anh', status: 'excellent', description: 'Thành tích xuất sắc' },
+    ]
+  }
+};
 
 export default function GradebookDetail({ onBack }: GradebookDetailProps) {
-  const totalStudents = overallStats.reduce((acc, curr) => acc + curr.value, 0);
+  const [currentPeriod, setCurrentPeriod] = useState('Giữa HKII');
   const [expandedGrades, setExpandedGrades] = useState<number[]>([]);
+  const [expandedProgress, setExpandedProgress] = useState<number[]>([]);
+  const [attentionPopup, setAttentionPopup] = useState<{type: 'support' | 'outstanding' | 'subjects', data: any[]} | null>(null);
+
+  const periodData = mockDataByPeriod[currentPeriod];
+  const isFinal = periodData.type === 'final';
 
   const toggleGrade = (id: number) => {
     setExpandedGrades(prev => 
       prev.includes(id) ? prev.filter(gId => gId !== id) : [...prev, id]
+    );
+  };
+
+  const toggleProgress = (id: number) => {
+    setExpandedProgress(prev => 
+      prev.includes(id) ? prev.filter(pId => pId !== id) : [...prev, id]
     );
   };
 
@@ -84,245 +224,549 @@ export default function GradebookDetail({ onBack }: GradebookDetailProps) {
         <button onClick={onBack} className="p-1 -ml-1 text-[#1e3a8a]">
           <ChevronLeft size={28} />
         </button>
-        <h1 className="text-[18px] font-bold text-[#1e3a8a]">Sổ ghi điểm</h1>
+        <h1 className="text-[18px] font-bold text-[#1e3a8a]">Sổ ghi điểm (Thông tư 27)</h1>
       </div>
 
       <div className="p-4 space-y-4">
         {/* Current Period */}
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-blue-100 flex items-center gap-3">
-          <div className="p-2 bg-blue-50 rounded-xl">
-            <Calendar size={24} className="text-blue-600" />
+        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
+              <Calendar size={24} className="text-blue-600" />
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <div className="text-[11px] font-bold text-[#1e3a8a] uppercase tracking-wide">Thời điểm hiện tại</div>
+              <div className="inline-flex items-center gap-1.5 bg-blue-50 text-[#1e3a8a] text-[12px] font-bold px-2.5 py-1 rounded-lg">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                {currentPeriod.toUpperCase()}
+              </div>
+            </div>
           </div>
-          <div>
-            <div className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Thời điểm hiện tại</div>
-            <div className="text-[14px] font-bold text-[#1e3a8a]">Đợt nhập điểm giữa học kỳ 2</div>
+          
+          <div className="flex flex-col items-center justify-center bg-amber-50 border border-amber-100 rounded-xl px-3 py-1.5 shrink-0">
+            <div className="text-[10px] font-extrabold text-amber-600/80 uppercase tracking-wider mb-0.5">Đợt tiếp theo</div>
+            <div className="flex items-center gap-1.5">
+              <Clock size={14} className="text-amber-600" />
+              <span className="text-[12px] font-bold text-amber-700">Còn 27 ngày</span>
+            </div>
           </div>
         </div>
 
-        {/* Overall Stats */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex items-center gap-2 mb-6">
-            <BarChart2 size={18} className="text-[#1e3a8a]" />
-            <h2 className="text-[14px] font-bold text-[#1e3a8a] uppercase tracking-wide">Tổng quan học lực</h2>
-          </div>
-          
-          <motion.div 
-            className="flex items-center"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          >
-            <div className="relative w-[120px] h-[120px] shrink-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={overallStats}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={55}
-                    paddingAngle={2}
-                    dataKey="value"
-                    stroke="none"
-                    isAnimationActive={true}
-                  >
-                    {overallStats.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px', fontWeight: 'bold' }}
-                    itemStyle={{ color: '#1e3a8a' }}
-                    formatter={(value: number, name: string, props: any) => [`${value} (${props.payload.percentage}%)`, name]}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">Tổng</span>
-                <span className="text-[18px] font-bold text-[#1e3a8a] leading-none mt-0.5">{totalStudents}</span>
-              </div>
-            </div>
+        {/* Period Selector */}
+        <div className="grid grid-cols-4 gap-2">
+          {PERIODS.map(period => (
+            <button
+              key={period}
+              onClick={() => setCurrentPeriod(period)}
+              className={`py-2.5 px-1 rounded-xl text-[11px] font-bold text-center transition-colors ${
+                currentPeriod === period 
+                  ? 'bg-[#1e3a8a] text-white shadow-md' 
+                  : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'
+              }`}
+            >
+              {period}
+            </button>
+          ))}
+        </div>
 
-            <div className="flex-1 pl-4 space-y-2.5">
-              {overallStats.map((stat, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[index] }} />
-                    <span className="text-[11px] font-medium text-gray-700 whitespace-nowrap">{stat.name}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[12px] font-bold text-gray-900">{stat.value}</span>
-                    <span className="text-[10px] font-bold text-gray-500 w-7 text-right">{stat.percentage}%</span>
+        {isFinal ? (
+          <>
+            {/* Overall Stats */}
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-6">
+                <BarChart2 size={18} className="text-[#1e3a8a]" />
+                <h2 className="text-[14px] font-bold text-[#1e3a8a] uppercase tracking-wide">Tổng quan học lực</h2>
+              </div>
+              
+              <motion.div 
+                className="flex items-center"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <div className="relative w-[120px] h-[120px] shrink-0">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={periodData.overallStats}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={40}
+                        outerRadius={55}
+                        paddingAngle={2}
+                        dataKey="value"
+                        stroke="none"
+                        isAnimationActive={true}
+                      >
+                        {periodData.overallStats.map((entry: any, index: number) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px', fontWeight: 'bold' }}
+                        itemStyle={{ color: '#1e3a8a' }}
+                        formatter={(value: number, name: string, props: any) => [`${value} (${props.payload.percentage}%)`, name]}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">Tổng</span>
+                    <span className="text-[18px] font-bold text-[#1e3a8a] leading-none mt-0.5">
+                      {periodData.overallStats.reduce((acc: number, curr: any) => acc + curr.value, 0)}
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
 
-        {/* Detailed Class Situation */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex items-center gap-2 mb-3">
-            <Users size={18} className="text-[#1e3a8a]" />
-            <h2 className="text-[14px] font-bold text-[#1e3a8a] uppercase tracking-wide">Tình hình theo khối lớp</h2>
-          </div>
-
-          {/* Common Legend */}
-          <div className="flex items-center justify-between gap-2 mb-5 px-1">
-            {gradeData[0].stats.map((stat, idx) => (
-              <div key={idx} className="flex items-center gap-1.5">
-                <div className={`w-2 h-2 rounded-full ${stat.color}`} />
-                <span className="text-[10px] font-bold text-gray-600 uppercase">{stat.label}</span>
-              </div>
-            ))}
-          </div>
-          
-          <div className="space-y-3">
-            {gradeData.map((grade) => {
-              const isExpanded = expandedGrades.includes(grade.id);
-              
-              return (
-                <div key={grade.id} className="border border-gray-100 rounded-xl overflow-hidden bg-white shadow-sm">
-                  <button 
-                    onClick={() => toggleGrade(grade.id)}
-                    className="w-full p-4 flex flex-col gap-2 bg-gray-50/30 hover:bg-gray-50/80 transition-colors text-left"
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-[14px] font-bold text-gray-900">{grade.name}</h3>
-                        <span className="text-[11px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">{grade.total} học sinh</span>
+                <div className="flex-1 pl-4 space-y-2.5">
+                  {periodData.overallStats.map((stat: any, index: number) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[index] }} />
+                        <span className="text-[11px] font-medium text-gray-700 whitespace-nowrap">{stat.name}</span>
                       </div>
-                      {isExpanded ? <ChevronUp size={18} className="text-gray-400" /> : <ChevronDown size={18} className="text-gray-400" />}
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[12px] font-bold text-gray-900">{stat.value}</span>
+                        <span className="text-[10px] font-bold text-gray-500 w-7 text-right">{stat.percentage}%</span>
+                      </div>
                     </div>
-                    
-                    {/* Summary when collapsed */}
-                    {!isExpanded && (
-                      <div className="flex items-center justify-between w-full mt-1">
-                        <div className="flex items-center gap-3">
-                          {grade.stats.map((stat, idx) => (
-                            <div key={idx} className="flex items-center gap-1">
-                              <div className={`w-1.5 h-1.5 rounded-full ${stat.color}`} />
-                              <span className="text-[11px] font-bold text-gray-700">{stat.value}</span>
-                            </div>
-                          ))}
-                        </div>
-                        {grade.warnings.length > 0 && (
-                          <div className="flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 rounded text-amber-600">
-                            <AlertTriangle size={10} />
-                            <span className="text-[10px] font-bold">{grade.warnings.length}</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </button>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Detailed Class Situation */}
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-3">
+                <Users size={18} className="text-[#1e3a8a]" />
+                <h2 className="text-[14px] font-bold text-[#1e3a8a] uppercase tracking-wide">Tình hình theo khối lớp</h2>
+              </div>
+
+              {/* Common Legend */}
+              <div className="flex items-center justify-between gap-2 mb-5 px-1">
+                {periodData.gradeData[0].stats.map((stat: any, idx: number) => (
+                  <div key={idx} className="flex items-center gap-1.5">
+                    <div className={`w-2 h-2 rounded-full ${stat.color}`} />
+                    <span className="text-[10px] font-bold text-gray-600 uppercase">{stat.label}</span>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="space-y-3">
+                {periodData.gradeData.map((grade: any) => {
+                  const isExpanded = expandedGrades.includes(grade.id);
                   
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
+                  return (
+                    <div key={grade.id} className="border border-gray-100 rounded-xl overflow-hidden bg-white shadow-sm">
+                      <button 
+                        onClick={() => toggleGrade(grade.id)}
+                        className="w-full p-4 flex flex-col gap-2 bg-gray-50/30 hover:bg-gray-50/80 transition-colors text-left"
                       >
-                        <div className="p-4 pt-0 bg-gray-50/30 border-t border-gray-100">
-                          {/* Vertical Bar Chart */}
-                          <div className="flex items-end justify-around h-32 mt-4 mb-2 px-2">
-                            {grade.stats.map((stat, idx) => {
-                              const maxVal = Math.max(...grade.stats.map(s => s.value));
-                              const heightPercent = maxVal > 0 ? (stat.value / maxVal) * 100 : 0;
-                              const realPercent = Math.round((stat.value / grade.total) * 100);
-                              return (
-                                <div key={idx} className="flex flex-col items-center gap-1.5 w-14">
-                                  <span className="text-[10px] font-bold text-gray-500">{realPercent}%</span>
-                                  <div className="w-10 h-20 bg-gray-100 rounded-t-md flex items-end overflow-hidden">
-                                    <motion.div 
-                                      className={`w-full rounded-t-md ${stat.color}`} 
-                                      initial={{ height: 0 }}
-                                      animate={{ height: `${heightPercent}%` }}
-                                      transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-                                    />
-                                  </div>
-                                  <span className="text-[12px] font-bold text-gray-900">{stat.value}</span>
-                                </div>
-                              );
-                            })}
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-[14px] font-bold text-gray-900">{grade.name}</h3>
+                            <span className="text-[11px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">{grade.total} học sinh</span>
                           </div>
+                          {isExpanded ? <ChevronUp size={18} className="text-gray-400" /> : <ChevronDown size={18} className="text-gray-400" />}
                         </div>
                         
-                        {/* Warnings for this grade */}
-                        {grade.warnings.length > 0 && (
-                          <div className="p-3 bg-red-50/50 border-t border-red-100">
-                            <div className="flex items-center gap-1.5 mb-2">
-                              <AlertTriangle size={12} className="text-red-500" />
-                              <span className="text-[10px] font-bold text-red-600 uppercase">Cảnh báo</span>
+                        {/* Summary when collapsed */}
+                        {!isExpanded && (
+                          <div className="flex items-center justify-between w-full mt-1">
+                            <div className="flex items-center gap-3">
+                              {grade.stats.map((stat: any, idx: number) => (
+                                <div key={idx} className="flex items-center gap-1">
+                                  <div className={`w-1.5 h-1.5 rounded-full ${stat.color}`} />
+                                  <span className="text-[11px] font-bold text-gray-700">{stat.value}</span>
+                                </div>
+                              ))}
                             </div>
-                            <div className="space-y-2">
-                              {grade.warnings.map(warning => (
-                                <div key={warning.id} className="flex items-start gap-2">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0" />
-                                  <div>
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                      <span className="text-[12px] font-bold text-gray-900">Lớp {warning.class}</span>
-                                      <span className="text-[9px] font-bold px-1.5 py-0.5 bg-white text-gray-600 rounded-md border border-red-100">{warning.subject}</span>
+                            {grade.warnings.length > 0 && (
+                              <div className="flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 rounded text-amber-600">
+                                <AlertTriangle size={10} />
+                                <span className="text-[10px] font-bold">{grade.warnings.length}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </button>
+                      
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="p-4 pt-0 bg-gray-50/30 border-t border-gray-100">
+                              {/* Vertical Bar Chart */}
+                              <div className="flex items-end justify-around h-32 mt-4 mb-2 px-2">
+                                {grade.stats.map((stat: any, idx: number) => {
+                                  const maxVal = Math.max(...grade.stats.map((s: any) => s.value));
+                                  const heightPercent = maxVal > 0 ? (stat.value / maxVal) * 100 : 0;
+                                  const realPercent = Math.round((stat.value / grade.total) * 100);
+                                  return (
+                                    <div key={idx} className="flex flex-col items-center gap-1.5 w-14">
+                                      <span className="text-[10px] font-bold text-gray-500">{realPercent}%</span>
+                                      <div className="w-10 h-20 bg-gray-100 rounded-t-md flex items-end overflow-hidden">
+                                        <motion.div 
+                                          className={`w-full rounded-t-md ${stat.color}`} 
+                                          initial={{ height: 0 }}
+                                          animate={{ height: `${heightPercent}%` }}
+                                          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+                                        />
+                                      </div>
+                                      <span className="text-[12px] font-bold text-gray-900">{stat.value}</span>
                                     </div>
-                                    <p className="text-[11px] text-gray-700">{warning.issue}</p>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                            
+                            {/* Warnings for this grade */}
+                            {grade.warnings.length > 0 && (
+                              <div className="p-3 bg-red-50/50 border-t border-red-100">
+                                <div className="flex items-center gap-1.5 mb-2">
+                                  <AlertTriangle size={12} className="text-red-500" />
+                                  <span className="text-[10px] font-bold text-red-600 uppercase">Cảnh báo</span>
+                                </div>
+                                <div className="space-y-2">
+                                  {grade.warnings.map((warning: any) => (
+                                    <div key={warning.id} className="flex items-start gap-2">
+                                      <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0" />
+                                      <div>
+                                        <div className="flex items-center gap-2 mb-0.5">
+                                          <span className="text-[12px] font-bold text-gray-900">Lớp {warning.class}</span>
+                                          <span className="text-[9px] font-bold px-1.5 py-0.5 bg-white text-gray-600 rounded-md border border-red-100">{warning.subject}</span>
+                                        </div>
+                                        <p className="text-[11px] text-gray-700">{warning.issue}</p>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Teacher Performance */}
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-4">
+                <Award size={18} className="text-[#1e3a8a]" />
+                <h2 className="text-[14px] font-bold text-[#1e3a8a] uppercase tracking-wide">Hiệu suất giáo viên</h2>
+              </div>
+              
+              <div className="space-y-3">
+                {periodData.teacherPerformance.map((teacher: any) => (
+                  <div key={teacher.id} className="flex items-start gap-3 p-3 border border-gray-100 rounded-xl bg-gray-50/50">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+                      teacher.status === 'excellent' ? 'bg-emerald-100 text-emerald-600' :
+                      teacher.status === 'good' ? 'bg-blue-100 text-blue-600' :
+                      'bg-red-100 text-red-600'
+                    }`}>
+                      {teacher.status === 'excellent' ? <TrendingUp size={20} /> :
+                       teacher.status === 'good' ? <UserCheck size={20} /> :
+                       <TrendingDown size={20} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className="text-[13px] font-bold text-gray-900 truncate">{teacher.name}</h4>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                          teacher.status === 'excellent' ? 'bg-emerald-100 text-emerald-700' :
+                          teacher.status === 'good' ? 'bg-blue-100 text-blue-700' :
+                          'bg-red-100 text-red-700'
+                        }`}>
+                          {teacher.status === 'excellent' ? 'Xuất sắc' :
+                           teacher.status === 'good' ? 'Tốt' :
+                           'Cần cải thiện'}
+                        </span>
+                      </div>
+                      <div className="text-[11px] font-bold text-gray-500 mb-1">{teacher.subject}</div>
+                      <p className="text-[12px] text-gray-700">{teacher.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Intermediate Period Content */}
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-4">
+                <Clock size={18} className="text-[#1e3a8a]" />
+                <h2 className="text-[14px] font-bold text-[#1e3a8a] uppercase tracking-wide">Tiến độ nhập điểm, đánh giá</h2>
+              </div>
+              
+              <div className="space-y-3">
+                {periodData.entryProgress.map((progress: any) => {
+                  const isExpanded = expandedProgress.includes(progress.id);
+                  const hasMissing = progress.subjectMissing > 0 || progress.competenceMissing > 0;
+                  
+                  return (
+                    <div key={progress.id} className="border border-gray-100 rounded-xl bg-gray-50/50 overflow-hidden">
+                      <button 
+                        onClick={() => hasMissing && toggleProgress(progress.id)}
+                        className={`w-full flex items-center justify-between p-3 ${hasMissing ? 'cursor-pointer hover:bg-gray-100/50' : 'cursor-default'}`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-[13px] font-bold text-gray-900">{progress.grade}</span>
+                          {hasMissing && (
+                            isExpanded ? <ChevronUp size={14} className="text-gray-400" /> : <ChevronDown size={14} className="text-gray-400" />
+                          )}
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="flex flex-col items-end">
+                            <span className="text-[10px] text-gray-500">Môn học</span>
+                            <span className={`text-[12px] font-bold ${progress.subjectMissing > 0 ? 'text-red-500' : 'text-emerald-500'}`}>
+                              {progress.subjectMissing > 0 ? `Thiếu ${progress.subjectMissing} lớp` : 'Đã xong'}
+                            </span>
+                          </div>
+                          <div className="w-px bg-gray-200"></div>
+                          <div className="flex flex-col items-end">
+                            <span className="text-[10px] text-gray-500">PCNL</span>
+                            <span className={`text-[12px] font-bold ${progress.competenceMissing > 0 ? 'text-red-500' : 'text-emerald-500'}`}>
+                              {progress.competenceMissing > 0 ? `Thiếu ${progress.competenceMissing} lớp` : 'Đã xong'}
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                      
+                      <AnimatePresence>
+                        {isExpanded && hasMissing && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="p-3 bg-white border-t border-gray-100 space-y-3">
+                              {progress.missingClasses.map((cls: any, idx: number) => (
+                                <div key={idx} className="bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                                  <div className="font-bold text-[12px] text-gray-900 mb-1.5">Lớp {cls.className}</div>
+                                  <div className="space-y-1.5">
+                                    {cls.missingSubjects.length > 0 && (
+                                      <div className="flex items-start gap-2">
+                                        <span className="text-[11px] text-gray-500 w-16 shrink-0">Môn học:</span>
+                                        <div className="flex flex-wrap gap-1">
+                                          {cls.missingSubjects.map((sub: string, sIdx: number) => (
+                                            <span key={sIdx} className="text-[10px] font-medium px-1.5 py-0.5 bg-red-50 text-red-600 rounded border border-red-100">
+                                              {sub}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+                                    {cls.missingPCNL && (
+                                      <div className="flex items-start gap-2">
+                                        <span className="text-[11px] text-gray-500 w-16 shrink-0">PCNL:</span>
+                                        <span className="text-[10px] font-medium px-1.5 py-0.5 bg-red-50 text-red-600 rounded border border-red-100">
+                                          Chưa nhập
+                                        </span>
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               ))}
                             </div>
-                          </div>
+                          </motion.div>
                         )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
 
-        {/* Teacher Performance */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex items-center gap-2 mb-4">
-            <Award size={18} className="text-[#1e3a8a]" />
-            <h2 className="text-[14px] font-bold text-[#1e3a8a] uppercase tracking-wide">Hiệu suất giáo viên</h2>
-          </div>
-          
-          <div className="space-y-3">
-            {teacherPerformance.map(teacher => (
-              <div key={teacher.id} className="flex items-start gap-3 p-3 border border-gray-100 rounded-xl bg-gray-50/50">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                  teacher.status === 'excellent' ? 'bg-emerald-100 text-emerald-600' :
-                  teacher.status === 'good' ? 'bg-blue-100 text-blue-600' :
-                  'bg-red-100 text-red-600'
-                }`}>
-                  {teacher.status === 'excellent' ? <TrendingUp size={20} /> :
-                   teacher.status === 'good' ? <UserCheck size={20} /> :
-                   <TrendingDown size={20} />}
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-4">
+                <BarChart2 size={18} className="text-[#1e3a8a]" />
+                <h2 className="text-[14px] font-bold text-[#1e3a8a] uppercase tracking-wide">Thống kê đánh giá môn học</h2>
+              </div>
+
+              {/* Common Legend */}
+              <div className="flex items-center gap-4 mb-5 px-1">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span className="text-[10px] font-bold text-gray-600 uppercase">Tốt</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start mb-1">
-                    <h4 className="text-[13px] font-bold text-gray-900 truncate">{teacher.name}</h4>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${
-                      teacher.status === 'excellent' ? 'bg-emerald-100 text-emerald-700' :
-                      teacher.status === 'good' ? 'bg-blue-100 text-blue-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>
-                      {teacher.status === 'excellent' ? 'Xuất sắc' :
-                       teacher.status === 'good' ? 'Tốt' :
-                       'Cần cải thiện'}
-                    </span>
-                  </div>
-                  <div className="text-[11px] font-bold text-gray-500 mb-1">{teacher.subject}</div>
-                  <p className="text-[12px] text-gray-700">{teacher.description}</p>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span className="text-[10px] font-bold text-gray-600 uppercase">Đạt</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-amber-400" />
+                  <span className="text-[10px] font-bold text-gray-600 uppercase">Chưa đạt</span>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+              
+              <div className="space-y-4">
+                {periodData.subjectEvaluation.map((subject: any, idx: number) => {
+                  const total = subject.htt + subject.ht + subject.cht;
+                  const httPct = Math.round((subject.htt / total) * 100);
+                  const htPct = Math.round((subject.ht / total) * 100);
+                  const chtPct = Math.round((subject.cht / total) * 100);
+                  
+                  return (
+                    <div key={idx} className="space-y-1.5">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[13px] font-bold text-gray-900">{subject.subject}</span>
+                        <span className="text-[11px] font-medium text-gray-500">{total} HS</span>
+                      </div>
+                      <div className="h-2.5 flex rounded-full overflow-hidden bg-gray-100">
+                        <div style={{ width: `${httPct}%` }} className="bg-blue-500" title={`Hoàn thành tốt: ${subject.htt}`} />
+                        <div style={{ width: `${htPct}%` }} className="bg-emerald-400" title={`Hoàn thành: ${subject.ht}`} />
+                        <div style={{ width: `${chtPct}%` }} className="bg-amber-400" title={`Chưa hoàn thành: ${subject.cht}`} />
+                      </div>
+                      <div className="flex justify-between text-[10px] font-bold px-1">
+                        <span className="text-blue-600">{httPct}%</span>
+                        <span className="text-emerald-600">{htPct}%</span>
+                        <span className="text-amber-600">{chtPct}%</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-5 text-center">
+                <button className="text-[12px] font-bold text-blue-600 hover:text-blue-700 hover:underline">
+                  Xem tất cả các môn
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-4">
+                <AlertTriangle size={18} className="text-[#1e3a8a]" />
+                <h2 className="text-[14px] font-bold text-[#1e3a8a] uppercase tracking-wide">Cần quan tâm</h2>
+              </div>
+              
+              <div className="space-y-3">
+                {periodData.attentionNeeded.studentsToSupport.length > 0 && (
+                  <button 
+                    onClick={() => setAttentionPopup({ type: 'support', data: periodData.attentionNeeded.studentsToSupport })}
+                    className="w-full flex items-center justify-between p-3.5 bg-[#fffcfc] border border-red-100 rounded-xl hover:bg-red-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <UserX size={18} className="text-red-500" />
+                      <span className="text-[14px] font-bold text-gray-800">Học sinh cần hỗ trợ</span>
+                    </div>
+                    <div className="bg-red-50 text-red-600 w-6 h-6 flex items-center justify-center rounded-full text-[12px] font-bold">
+                      {periodData.attentionNeeded.studentsToSupport.length}
+                    </div>
+                  </button>
+                )}
+
+                {periodData.attentionNeeded.outstandingStudents.length > 0 && (
+                  <button 
+                    onClick={() => setAttentionPopup({ type: 'outstanding', data: periodData.attentionNeeded.outstandingStudents })}
+                    className="w-full flex items-center justify-between p-3.5 bg-[#fcfdfc] border border-emerald-100 rounded-xl hover:bg-emerald-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Award size={18} className="text-emerald-500" />
+                      <span className="text-[14px] font-bold text-gray-800">Học sinh nổi bật</span>
+                    </div>
+                    <div className="bg-emerald-50 text-emerald-600 w-6 h-6 flex items-center justify-center rounded-full text-[12px] font-bold">
+                      {periodData.attentionNeeded.outstandingStudents.length}
+                    </div>
+                  </button>
+                )}
+
+                {periodData.attentionNeeded.subjectsToWatch.length > 0 && (
+                  <button 
+                    onClick={() => setAttentionPopup({ type: 'subjects', data: periodData.attentionNeeded.subjectsToWatch })}
+                    className="w-full flex items-center justify-between p-3.5 bg-[#fffdfa] border border-amber-100 rounded-xl hover:bg-amber-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <BookOpen size={18} className="text-amber-500" />
+                      <span className="text-[14px] font-bold text-gray-800">Môn học cần lưu ý</span>
+                    </div>
+                    <div className="bg-amber-50 text-amber-600 w-6 h-6 flex items-center justify-center rounded-full text-[12px] font-bold">
+                      {periodData.attentionNeeded.subjectsToWatch.length}
+                    </div>
+                  </button>
+                )}
+              </div>
+            </div>
+          </>
+        )}
 
       </div>
+
+      {/* Attention Popup */}
+      <AnimatePresence>
+        {attentionPopup && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  {attentionPopup.type === 'support' && <UserX size={18} className="text-red-500" />}
+                  {attentionPopup.type === 'outstanding' && <Award size={18} className="text-emerald-500" />}
+                  {attentionPopup.type === 'subjects' && <BookOpen size={18} className="text-amber-500" />}
+                  <h3 className="text-[15px] font-bold text-gray-900">
+                    {attentionPopup.type === 'support' && 'Học sinh cần hỗ trợ'}
+                    {attentionPopup.type === 'outstanding' && 'Học sinh nổi bật'}
+                    {attentionPopup.type === 'subjects' && 'Môn học cần lưu ý'}
+                  </h3>
+                </div>
+                <button 
+                  onClick={() => setAttentionPopup(null)}
+                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="p-4 max-h-[60vh] overflow-y-auto">
+                <div className="space-y-3">
+                  {attentionPopup.data.map((item: any, idx: number) => (
+                    <div 
+                      key={idx} 
+                      className={`flex flex-col p-3 rounded-xl border ${
+                        attentionPopup.type === 'support' ? 'bg-red-50/50 border-red-100' :
+                        attentionPopup.type === 'outstanding' ? 'bg-emerald-50/50 border-emerald-100' :
+                        'bg-amber-50/50 border-amber-100'
+                      }`}
+                    >
+                      {attentionPopup.type === 'subjects' ? (
+                        <>
+                          <span className="text-[13px] font-bold text-gray-900 mb-1">{item.subject}</span>
+                          <span className="text-[12px] text-gray-600">{item.issue}</span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex justify-between items-center mb-1.5">
+                            <span className="text-[13px] font-bold text-gray-900">{item.name}</span>
+                            <span className="text-[11px] font-bold px-2 py-0.5 bg-white text-gray-600 rounded border border-gray-200">
+                              {item.class}
+                            </span>
+                          </div>
+                          <span className="text-[12px] text-gray-600">
+                            {attentionPopup.type === 'support' ? item.reason : item.achievement}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

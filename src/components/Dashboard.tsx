@@ -252,7 +252,9 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             </div>
             <div className="flex flex-col justify-center">
               <p className="text-[13px] text-gray-800 leading-snug">
-                Còn <span className="font-bold text-[#1e3a8a]">27 ngày</span> đến đợt nhập điểm tiếp theo: <span className="font-bold text-gray-700">Cuối HKII</span> <span className="text-gray-500 font-medium">(Dự kiến: 28/04/2026)</span>
+                Còn <span className="font-bold text-[#1e3a8a]">27 ngày</span> đến đợt nhập điểm tiếp theo:
+                <br />
+                <span className="font-bold text-gray-700">Cuối HKII</span> <span className="text-gray-500 font-medium">(Dự kiến: 28/04/2026)</span>
               </p>
               <div className="flex items-center gap-2 text-[11px] font-bold uppercase mt-1.5">
                 <div className="w-2 h-2 bg-yellow-400 rounded-full shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
