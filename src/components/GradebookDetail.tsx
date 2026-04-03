@@ -200,7 +200,6 @@ export default function GradebookDetail({ onBack }: GradebookDetailProps) {
   const [currentPeriod, setCurrentPeriod] = useState('Giữa HKII');
   const [expandedGrades, setExpandedGrades] = useState<number[]>([]);
   const [expandedProgress, setExpandedProgress] = useState<number[]>([]);
-  const [attentionPopup, setAttentionPopup] = useState<{type: 'support' | 'outstanding' | 'subjects', data: any[]} | null>(null);
 
   const periodData = mockDataByPeriod[currentPeriod];
   const isFinal = periodData.type === 'final';
@@ -642,131 +641,10 @@ export default function GradebookDetail({ onBack }: GradebookDetailProps) {
                 </button>
               </div>
             </div>
-
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-              <div className="flex items-center gap-2 mb-4">
-                <AlertTriangle size={18} className="text-[#1e3a8a]" />
-                <h2 className="text-[14px] font-bold text-[#1e3a8a] uppercase tracking-wide">Cần quan tâm</h2>
-              </div>
-              
-              <div className="space-y-3">
-                {periodData.attentionNeeded.studentsToSupport.length > 0 && (
-                  <button 
-                    onClick={() => setAttentionPopup({ type: 'support', data: periodData.attentionNeeded.studentsToSupport })}
-                    className="w-full flex items-center justify-between p-3.5 bg-[#fffcfc] border border-red-100 rounded-xl hover:bg-red-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <UserX size={18} className="text-red-500" />
-                      <span className="text-[14px] font-bold text-gray-800">Học sinh cần hỗ trợ</span>
-                    </div>
-                    <div className="bg-red-50 text-red-600 w-6 h-6 flex items-center justify-center rounded-full text-[12px] font-bold">
-                      {periodData.attentionNeeded.studentsToSupport.length}
-                    </div>
-                  </button>
-                )}
-
-                {periodData.attentionNeeded.outstandingStudents.length > 0 && (
-                  <button 
-                    onClick={() => setAttentionPopup({ type: 'outstanding', data: periodData.attentionNeeded.outstandingStudents })}
-                    className="w-full flex items-center justify-between p-3.5 bg-[#fcfdfc] border border-emerald-100 rounded-xl hover:bg-emerald-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Award size={18} className="text-emerald-500" />
-                      <span className="text-[14px] font-bold text-gray-800">Học sinh nổi bật</span>
-                    </div>
-                    <div className="bg-emerald-50 text-emerald-600 w-6 h-6 flex items-center justify-center rounded-full text-[12px] font-bold">
-                      {periodData.attentionNeeded.outstandingStudents.length}
-                    </div>
-                  </button>
-                )}
-
-                {periodData.attentionNeeded.subjectsToWatch.length > 0 && (
-                  <button 
-                    onClick={() => setAttentionPopup({ type: 'subjects', data: periodData.attentionNeeded.subjectsToWatch })}
-                    className="w-full flex items-center justify-between p-3.5 bg-[#fffdfa] border border-amber-100 rounded-xl hover:bg-amber-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <BookOpen size={18} className="text-amber-500" />
-                      <span className="text-[14px] font-bold text-gray-800">Môn học cần lưu ý</span>
-                    </div>
-                    <div className="bg-amber-50 text-amber-600 w-6 h-6 flex items-center justify-center rounded-full text-[12px] font-bold">
-                      {periodData.attentionNeeded.subjectsToWatch.length}
-                    </div>
-                  </button>
-                )}
-              </div>
-            </div>
           </>
         )}
 
       </div>
-
-      {/* Attention Popup */}
-      <AnimatePresence>
-        {attentionPopup && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
-            >
-              <div className="flex items-center justify-between p-4 border-b border-gray-100">
-                <div className="flex items-center gap-2">
-                  {attentionPopup.type === 'support' && <UserX size={18} className="text-red-500" />}
-                  {attentionPopup.type === 'outstanding' && <Award size={18} className="text-emerald-500" />}
-                  {attentionPopup.type === 'subjects' && <BookOpen size={18} className="text-amber-500" />}
-                  <h3 className="text-[15px] font-bold text-gray-900">
-                    {attentionPopup.type === 'support' && 'Học sinh cần hỗ trợ'}
-                    {attentionPopup.type === 'outstanding' && 'Học sinh nổi bật'}
-                    {attentionPopup.type === 'subjects' && 'Môn học cần lưu ý'}
-                  </h3>
-                </div>
-                <button 
-                  onClick={() => setAttentionPopup(null)}
-                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              
-              <div className="p-4 max-h-[60vh] overflow-y-auto">
-                <div className="space-y-3">
-                  {attentionPopup.data.map((item: any, idx: number) => (
-                    <div 
-                      key={idx} 
-                      className={`flex flex-col p-3 rounded-xl border ${
-                        attentionPopup.type === 'support' ? 'bg-red-50/50 border-red-100' :
-                        attentionPopup.type === 'outstanding' ? 'bg-emerald-50/50 border-emerald-100' :
-                        'bg-amber-50/50 border-amber-100'
-                      }`}
-                    >
-                      {attentionPopup.type === 'subjects' ? (
-                        <>
-                          <span className="text-[13px] font-bold text-gray-900 mb-1">{item.subject}</span>
-                          <span className="text-[12px] text-gray-600">{item.issue}</span>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex justify-between items-center mb-1.5">
-                            <span className="text-[13px] font-bold text-gray-900">{item.name}</span>
-                            <span className="text-[11px] font-bold px-2 py-0.5 bg-white text-gray-600 rounded border border-gray-200">
-                              {item.class}
-                            </span>
-                          </div>
-                          <span className="text-[12px] text-gray-600">
-                            {attentionPopup.type === 'support' ? item.reason : item.achievement}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
