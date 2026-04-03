@@ -596,15 +596,15 @@ export default function GradebookDetail({ onBack }: GradebookDetailProps) {
               <div className="flex items-center gap-4 mb-5 px-1">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-blue-500" />
-                  <span className="text-[10px] font-bold text-gray-600 uppercase">Tốt</span>
+                  <span className="text-[10px] font-bold text-gray-600 uppercase">Hoàn thành Tốt</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <span className="text-[10px] font-bold text-gray-600 uppercase">Đạt</span>
+                  <span className="text-[10px] font-bold text-gray-600 uppercase">Hoàn thành</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-amber-400" />
-                  <span className="text-[10px] font-bold text-gray-600 uppercase">Chưa đạt</span>
+                  <span className="text-[10px] font-bold text-gray-600 uppercase">Chưa hoàn thành</span>
                 </div>
               </div>
               
